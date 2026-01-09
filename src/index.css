@@ -111,18 +111,30 @@ select:focus {
 
 /* Theme-specific overrides (applied via html class: theme-*) */
 html.theme-modern body {
-  background-image: radial-gradient(circle at top, #0b1020, #0f172a);
+  background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #0b1020, #0f172a);
+  background-size: cover, cover;
+  background-position: center, top;
+  background-attachment: fixed, scroll;
+  background-blend-mode: overlay;
   color: #f8fafc;
 }
 
 html.theme-ocean body {
-  background-image: radial-gradient(circle at top, #05263a, #04263a);
+  background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #05263a, #04263a);
+  background-size: cover, cover;
+  background-position: center, top;
+  background-attachment: fixed, scroll;
+  background-blend-mode: overlay;
   background-color: #04293a;
   color: #ecfeff;
 }
 
 html.theme-sunset body {
-  background-image: radial-gradient(circle at top, #05281a, #03221a);
+  background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #05281a, #03221a);
+  background-size: cover, cover;
+  background-position: center, top;
+  background-attachment: fixed, scroll;
+  background-blend-mode: overlay;
   background-color: #03221a;
   color: #ecfff9;
 }
