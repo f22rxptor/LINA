@@ -1,10 +1,39 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import Button from './Button'
 import { ThemeContext, themes } from '../context/ThemeContext'
 
 export default function Header({ user, onLoginClick, onSignOut }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { theme, setTheme } = useContext(ThemeContext)
+  const [parallax, setParallax] = useState(false)
+
+  useEffect(() => {
+    // initialize from localStorage
+    try {
+      const stored = localStorage.getItem('parallaxEnabled')
+      if (stored === '1') setParallax(true)
+    } catch (e) {}
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => {
+      const offset = Math.round(window.scrollY * 0.3)
+      document.documentElement.style.setProperty('--bg-offset', `${offset}px`)
+    }
+
+    if (parallax) {
+      document.documentElement.classList.add('parallax-bg')
+      window.addEventListener('scroll', onScroll, { passive: true })
+      onScroll()
+    } else {
+      document.documentElement.classList.remove('parallax-bg')
+      document.documentElement.style.removeProperty('--bg-offset')
+    }
+
+    try { localStorage.setItem('parallaxEnabled', parallax ? '1' : '0') } catch (e) {}
+
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [parallax])
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
@@ -67,6 +96,14 @@ export default function Header({ user, onLoginClick, onSignOut }) {
                 />
               ))}
             </div>
+            {/* Parallax toggle */}
+            <button
+              onClick={() => setParallax(p => !p)}
+              title="Toggle parallax background"
+              className={`ml-2 px-2 py-1 text-xs rounded-md transition-all ${parallax ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}`}
+            >
+              {parallax ? 'Parallax ON' : 'Parallax OFF'}
+            </button>
           </div>
 
           {/* Auth Buttons */}

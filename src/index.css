@@ -6,6 +6,10 @@
   font-family: 'Inter', sans-serif;
 }
 
+:root {
+  --bg-offset: 0px;
+}
+
 body {
   background-color: #0f172a;
   background-image: radial-gradient(circle at top, #1e293b, #0f172a);
@@ -113,7 +117,7 @@ select:focus {
 html.theme-modern body {
   background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #0b1020, #0f172a);
   background-size: cover, cover;
-  background-position: center, top;
+  background-position: center calc(50% + var(--bg-offset, 0px)), top;
   background-attachment: fixed, scroll;
   background-blend-mode: overlay;
   color: #f8fafc;
@@ -122,7 +126,7 @@ html.theme-modern body {
 html.theme-ocean body {
   background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #05263a, #04263a);
   background-size: cover, cover;
-  background-position: center, top;
+  background-position: center calc(50% + var(--bg-offset, 0px)), top;
   background-attachment: fixed, scroll;
   background-blend-mode: overlay;
   background-color: #04293a;
@@ -132,7 +136,7 @@ html.theme-ocean body {
 html.theme-sunset body {
   background-image: url('./assets/baxc.png'), radial-gradient(circle at top, #05281a, #03221a);
   background-size: cover, cover;
-  background-position: center, top;
+  background-position: center calc(50% + var(--bg-offset, 0px)), top;
   background-attachment: fixed, scroll;
   background-blend-mode: overlay;
   background-color: #03221a;
