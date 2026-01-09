@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useEffect } from 'react'
 
 export const ThemeContext = createContext()
 
@@ -23,17 +23,25 @@ export const themes = {
   },
   sunset: {
     name: 'Sunset',
-    bg: 'from-orange-900 to-red-900',
-    primary: 'from-orange-400 to-red-500',
-    secondary: 'from-red-500 to-pink-600',
-    accent: 'orange',
-    navbar: 'bg-red-900/80 backdrop-blur-lg border-b border-orange-500/30',
-    card: 'bg-red-800/30 border border-orange-500/50'
+    bg: 'from-emerald-900 to-teal-900',
+    primary: 'from-emerald-400 to-teal-500',
+    secondary: 'from-teal-500 to-cyan-600',
+    accent: 'teal',
+    navbar: 'bg-teal-900/80 backdrop-blur-lg border-b border-emerald-500/30',
+    card: 'bg-teal-800/30 border border-emerald-500/50'
   }
 }
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('modern')
+
+  // apply selected theme as a class on the root html element
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const html = document.documentElement
+    html.classList.remove('theme-modern', 'theme-ocean', 'theme-sunset')
+    html.classList.add(`theme-${theme}`)
+  }, [theme])
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, themeConfig: themes[theme] }}>

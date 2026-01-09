@@ -13,12 +13,12 @@ export default function Header({ user, onLoginClick, onSignOut }) {
   }
 
   return (
-    <header className="glass-nav fixed top-0 left-0 right-0 z-50 border-b border-slate-700">
+    <header className="glass-nav nav-style fixed top-0 left-0 right-0 z-50 border-b border-slate-700">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg group-hover:shadow-lg group-hover:shadow-indigo-500/50 transition-all">
+            <div className="p-2 primary-accent rounded-lg group-hover:shadow-lg group-hover:shadow-indigo-500/50 transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
                 <path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"></path>
@@ -62,7 +62,7 @@ export default function Header({ user, onLoginClick, onSignOut }) {
                   style={{
                     background: key === 'modern' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 
                                key === 'ocean' ? 'linear-gradient(135deg, #06b6d4, #3b82f6)' :
-                               'linear-gradient(135deg, #f97316, #ef4444)'
+                               'linear-gradient(135deg, #10b981, #0ea5a4)'
                   }}
                 />
               ))}

@@ -108,3 +108,30 @@ select:focus {
   border-color: #818cf8;
   transform: translateY(-4px);
 }
+
+/* Theme-specific overrides (applied via html class: theme-*) */
+html.theme-modern body {
+  background-image: radial-gradient(circle at top, #0b1020, #0f172a);
+  color: #f8fafc;
+}
+
+html.theme-ocean body {
+  background-image: radial-gradient(circle at top, #05263a, #04263a);
+  background-color: #04293a;
+  color: #ecfeff;
+}
+
+html.theme-sunset body {
+  background-image: radial-gradient(circle at top, #05281a, #03221a);
+  background-color: #03221a;
+  color: #ecfff9;
+}
+
+/* utility CSS hooks: primary accents for components */
+html.theme-modern .primary-accent { background-image: linear-gradient(135deg,#6366f1,#8b5cf6); }
+html.theme-ocean .primary-accent { background-image: linear-gradient(135deg,#06b6d4,#3b82f6); }
+html.theme-sunset .primary-accent { background-image: linear-gradient(135deg,#10b981,#0ea5a4); }
+
+html.theme-modern .nav-style { background-color: rgba(15,23,42,0.7); }
+html.theme-ocean .nav-style { background-color: rgba(3,37,65,0.75); backdrop-filter: blur(8px); }
+html.theme-sunset .nav-style { background-color: rgba(3,37,28,0.75); backdrop-filter: blur(8px); }
