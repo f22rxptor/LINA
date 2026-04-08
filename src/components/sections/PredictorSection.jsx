@@ -50,7 +50,8 @@ export default function PredictorSection() {
     setLoading(true)
     
     try {
-      const response = await fetch('/api/predict', {
+      const baseUrl = import.meta.env.VITE_API_URL || ''
+      const response = await fetch(`${baseUrl}/api/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

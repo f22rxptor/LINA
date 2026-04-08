@@ -22,7 +22,8 @@ export default function AuthModal({ isOpen, onClose, onAuth }) {
     setLoading(true)
 
     try {
-      const endpoint = isLogin ? '/api/login' : '/api/signup'
+      const baseUrl = import.meta.env.VITE_API_URL || ''
+      const endpoint = `${baseUrl}${isLogin ? '/api/login' : '/api/signup'}`
       const payload = {
         email: formData.email,
         password: formData.password,

@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: lina-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: ML_SERVER_URL
+        value: https://lina-ml-server.onrender.com
+      - key: DB_HOST
+        fromService:
+          type: mysql
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: mysql
+          property: port
+      - key: DB_NAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+  - type: web
+    name: lina-ml-server
+    env: python-3
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python ml-server/app.py
+    envVars:
+      - key: PORT
+        value: 3002
+      - key: FLASK_ENV
+        value: production

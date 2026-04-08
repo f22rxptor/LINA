@@ -32,7 +32,8 @@ app.post('/api/predict', async (req, res) => {
     const { age, bmi, bp_systolic, fasting_glucose, familyHistory, activityLevel } = req.body
 
     // Call Python ML server
-    const mlResponse = await fetch('http://localhost:3002/api/predict', {
+    const mlServerUrl = process.env.ML_SERVER_URL || 'http://localhost:3002'
+    const mlResponse = await fetch(`${mlServerUrl}/api/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
