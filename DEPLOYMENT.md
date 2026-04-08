@@ -21,7 +21,7 @@ This guide explains how to deploy LINA across multiple platforms.
 3. Import your GitHub repository
 4. Set environment variables in Vercel Project Settings:
    ```
-   VITE_API_URL=https://lina-backend.onrender.com
+   VITE_API_URL=https://lina-opcw.onrender.com
    ```
 5. Deploy!
 

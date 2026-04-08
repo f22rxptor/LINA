@@ -17,7 +17,7 @@ Add the following:
 
 | Name | Value | Environments |
 |------|-------|--------------|
-| `VITE_API_URL` | `https://lina-backend.onrender.com` | Production, Preview, Development |
+| `VITE_API_URL` | `https://lina-opcw.onrender.com` | Production, Preview, Development |
 
 **Note:** Replace `lina-backend.onrender.com` with your actual Render backend URL once deployed.
 
@@ -51,5 +51,5 @@ Then run: `npm run dev`
 
 Once deployed:
 - **Frontend**: `https://lina.vercel.app` (or your custom domain)
-- **Backend**: `https://lina-backend.onrender.com`
+- **Backend**: `https://lina-opcw.onrender.com`
 - **ML Server**: `https://lina-ml-server.onrender.com`
