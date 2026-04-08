@@ -55,17 +55,20 @@ export default function PredictorSection() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          age: parseFloat(formData.age),
-          bmi: parseFloat(formData.bmi),
-          bp_systolic: parseFloat(formData.bp_systolic),
-          fasting_glucose: parseFloat(formData.fasting_glucose),
-          familyHistory: formData.familyHistory,
-          activityLevel: formData.activityLevel
+          age: parseFloat(formData.age) || 0,
+          bmi: parseFloat(formData.bmi) || 0,
+          bp_systolic: parseFloat(formData.bp_systolic) || 0,
+          fasting_glucose: parseFloat(formData.fasting_glucose) || 0,
+          familyHistory: parseFloat(formData.familyHistory) || 1,
+          activityLevel: parseFloat(formData.activityLevel) || 0,
+          cholesterol: 200,
+          yearsCondition: 0
         })
       })
 
       if (!response.ok) {
-        throw new Error('Prediction failed')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Prediction failed: ${response.statusText}`)
       }
 
       const mlPrediction = await response.json()
@@ -112,8 +115,9 @@ export default function PredictorSection() {
         setLoading(false)
       }, 800)
     } catch (error) {
-      console.error('Error:', error)
-      alert('Error making prediction. Make sure both servers are running: npm run dev:all')
+      console.error('Prediction Error:', error)
+      const errorMsg = error.message || 'Error making prediction'
+      alert(errorMsg)
       setLoading(false)
     }
   }

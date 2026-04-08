@@ -34,8 +34,8 @@ def predict():
         bmi = float(data.get('bmi', 0))
         bp_systolic = float(data.get('bp_systolic', 0))
         fasting_glucose = float(data.get('fasting_glucose', 0))
-        family_history = float(data.get('familyHistory', 0))
-        activity_level = float(data.get('activityLevel', 0))
+        family_history = float(data.get('familyHistory', 1)) if data.get('familyHistory') else 1.0
+        activity_level = float(data.get('activityLevel', 0)) if data.get('activityLevel') else 0.0
         cholesterol = float(data.get('cholesterol', 200))  # default healthy level
         years_condition = float(data.get('yearsCondition', 0))
         
@@ -64,6 +64,6 @@ def predict():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    port = os.getenv('ML_PORT', 3002)
+    port = int(os.getenv('PORT', os.getenv('ML_PORT', 3002)))
     print(f"🚀 ML Server running on http://localhost:{port}")
-    app.run(debug=True, port=port)
+    app.run(debug=False, host='0.0.0.0', port=port)

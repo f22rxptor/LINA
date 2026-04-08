@@ -29,7 +29,7 @@ app.get('/api/health', (req, res) => {
 // ML Model endpoint
 app.post('/api/predict', async (req, res) => {
   try {
-    const { age, bmi, bp_systolic, fasting_glucose, familyHistory, activityLevel } = req.body
+    const { age, bmi, bp_systolic, fasting_glucose, familyHistory, activityLevel, cholesterol, yearsCondition } = req.body
 
     // Call Python ML server
     const mlServerUrl = process.env.ML_SERVER_URL || 'http://localhost:3002'
@@ -37,17 +37,20 @@ app.post('/api/predict', async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        age,
-        bmi,
-        bp_systolic,
-        fasting_glucose,
-        familyHistory,
-        activityLevel
+        age: parseFloat(age) || 0,
+        bmi: parseFloat(bmi) || 0,
+        bp_systolic: parseFloat(bp_systolic) || 0,
+        fasting_glucose: parseFloat(fasting_glucose) || 0,
+        familyHistory: parseFloat(familyHistory) || 1,
+        activityLevel: parseFloat(activityLevel) || 0,
+        cholesterol: parseFloat(cholesterol) || 200,
+        yearsCondition: parseFloat(yearsCondition) || 0
       })
     })
-
     if (!mlResponse.ok) {
-      return res.status(mlResponse.status).json({ error: 'ML prediction failed' })
+      const mlError = await mlResponse.json().catch(() => ({}))
+      console.error('ML Server Error:', mlError)
+      return res.status(mlResponse.status).json({ error: mlError.error || 'ML prediction failed' })
     }
 
     const prediction = await mlResponse.json()
@@ -66,8 +69,11 @@ app.post('/api/predict', async (req, res) => {
 
     res.json(prediction)
   } catch (error) {
-    console.error('Prediction Error:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    console.error('Prediction Endpoint Error:', error.message)
+    if (error.message.includes('fetch failed')) {
+      return res.status(503).json({ error: 'ML Server is not reachable. Please check if the ML server is running.' })
+    }
+    res.status(500).json({ error: error.message || 'Internal server error' })
   }
 })
 
