@@ -1,18 +1,25 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
+import { pool, query } from './db.js'
 
 dotenv.config()
 
 const app = express()
-app.use(cors())
+app.use(cors({ origin: '*', credentials: true }))
 app.use(express.json())
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-if (!GEMINI_API_KEY) {
-  console.error('❌ ERROR: GEMINI_API_KEY not found in environment variables. Please set it in .env file.')
-  process.exit(1)
-}
+// test database connection at startup
+pool.getConnection()
+  .then(conn => {
+    console.log('✅ Connected to MySQL database')
+    conn.release()
+  })
+  .catch(err => {
+    console.error('❌ Unable to connect to MySQL:', err.message)
+  })
+
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -43,6 +50,19 @@ app.post('/api/predict', async (req, res) => {
     }
 
     const prediction = await mlResponse.json()
+
+    // log the request and result into the database (if configured)
+    try {
+      await query(
+        `INSERT INTO predictions 
+          (age,bmi,bp_systolic,fasting_glucose,family_history,activity_level,risk,probability,created_at)
+         VALUES (?,?,?,?,?,?,?,?,NOW())`,
+        [age, bmi, bp_systolic, fasting_glucose, familyHistory, activityLevel, prediction.risk, prediction.probability]
+      )
+    } catch (dbErr) {
+      console.warn('Could not log prediction to DB:', dbErr.message)
+    }
+
     res.json(prediction)
   } catch (error) {
     console.error('Prediction Error:', error)
@@ -50,53 +70,48 @@ app.post('/api/predict', async (req, res) => {
   }
 })
 
-app.post('/api/chat', async (req, res) => {
+// ---------- authentication endpoints ----------
+
+app.post('/api/signup', async (req, res) => {
+  const { name, email, password } = req.body
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email and password are required' })
+  }
+
   try {
-    const { message } = req.body
-
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' })
+    const existing = await query('SELECT id FROM users WHERE email = ?', [email])
+    if (existing.length) {
+      return res.status(409).json({ error: 'Email already in use' })
     }
-
-    const systemPrompt = "You are a friendly and helpful AI assistant for health and wellness, specializing in diabetes and hypertension. Your name is Aura. Your ONLY purpose is to provide information related to healthcare, healthy living, diabetes, and hypertension. You MUST refuse to answer any questions outside of this scope. For all healthcare questions, provide clear, concise, and safe information. Always include a disclaimer: 'This information is for educational purposes only. Always consult with a healthcare professional for medical advice.'"
-
-    const payload = {
-      contents: [{
-        parts: [{ text: message }]
-      }],
-      systemInstruction: {
-        parts: [{ text: systemPrompt }]
-      },
-    }
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }
+    const hash = await bcrypt.hash(password, 10)
+    const result = await query(
+      'INSERT INTO users (name,email,password,created_at) VALUES (?,?,?,NOW())',
+      [name, email, hash]
     )
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Gemini API Error:', errorData)
-      return res.status(response.status).json({ error: 'Failed to get response from Gemini API' })
-    }
-
-    const result = await response.json()
-    const candidate = result.candidates?.[0]
-
-    if (candidate && candidate.content?.parts?.[0]?.text) {
-      return res.json({ reply: candidate.content.parts[0].text })
-    } else {
-      return res.status(500).json({ error: 'Invalid response from Gemini API' })
-    }
-  } catch (error) {
-    console.error('Server Error:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    res.json({ id: result.insertId, name, email })
+  } catch (err) {
+    console.error('Signup error:', err)
+    res.status(500).json({ error: 'Database error' })
   }
 })
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' })
+
+  try {
+    const rows = await query('SELECT id,name,password FROM users WHERE email = ?', [email])
+    const user = rows[0]
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' })
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) return res.status(401).json({ error: 'Invalid credentials' })
+    res.json({ id: user.id, name: user.name, email })
+  } catch (err) {
+    console.error('Login error:', err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

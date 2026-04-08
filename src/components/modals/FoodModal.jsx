@@ -34,7 +34,7 @@ export default function FoodModal({ food, isOpen, onClose }) {
               <div className="flex justify-between border-b border-slate-700 py-1"><span>Protein:</span> <strong>{food.protein}g</strong></div>
               <div className="flex justify-between border-b border-slate-700 py-1"><span>Fiber:</span> <strong>{food.fiber}g</strong></div>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>

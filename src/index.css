@@ -3,7 +3,8 @@
 @import 'tailwindcss/utilities';
 
 * {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  scroll-behavior: smooth;
 }
 
 :root {
@@ -11,143 +12,146 @@
 }
 
 body {
-  background-color: #0f172a;
-  background-image: radial-gradient(circle at top, #1e293b, #0f172a);
+  background-color: #020617; /* Slate 950 */
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.08), transparent 25%);
   color: #f8fafc;
+  overflow-x: hidden;
+}
+
+/* Background Grid Pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #020617;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4f46e5;
-  border-radius: 4px;
+  background: #334155;
+  border-radius: 5px;
+  border: 2px solid #020617;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
+  background: #475569;
 }
 
-/* Glassmorphism effect */
+/* Glassmorphism effects */
 .glass-nav {
-  background-color: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(2, 6, 23, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .section-card {
   background-color: transparent;
   border: none;
-  padding: 4rem 1rem;
-  margin-bottom: 2rem;
+  padding: 6rem 1rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
 }
 
+/* Modal backdrop */
 .modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background-color: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(8px);
 }
 
-/* Animations */
+/* Animations hooks for tailwind config or manual */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Chat Bubbles */
-.chat-bubble {
-  max-width: 75%;
-  padding: 0.75rem 1rem;
-  border-radius: 1.25rem;
-}
-
-.user-bubble {
-  background-image: linear-gradient(to right, #6366f1, #818cf8);
-  color: white;
-  border-bottom-right-radius: 0.25rem;
-  align-self: flex-end;
-}
-
-.ai-bubble {
-  background-color: #334155;
-  color: #f1f5f9;
-  border-bottom-left-radius: 0.25rem;
-  align-self: flex-start;
-}
-
-/* Custom Input Focus */
+/* Base custom input styles */
 input:focus,
-select:focus {
-  box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #818cf8;
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 2px #020617, 0 0 0 4px #818cf8;
   outline: none;
 }
 
 .info-card {
-  background-color: rgba(30, 41, 59, 0.5);
-  border: 1px solid #334155;
-  transition: all 0.3s ease;
+  background-color: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
 }
 
 .info-card:hover {
-  border-color: #818cf8;
-  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.4);
+  background-color: rgba(30, 41, 59, 0.7);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
 }
 
-/* Theme-specific overrides (applied via html class: theme-*) */
+/* Theme overrides */
 html.theme-modern body {
-  background-image: url('/assets/baxc.png'), radial-gradient(circle at top, #0b1020, #0f172a);
-  background-size: cover, cover;
-  background-position: center calc(50% + var(--bg-offset, 0px)), top;
-  background-attachment: fixed, scroll;
-  background-blend-mode: overlay;
+  background-image: 
+    url('/assets/baxc.png'),
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.1), transparent 30%),
+    radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.1), transparent 30%);
+  background-color: #020617;
+  background-size: cover, auto, auto;
+  background-position: center calc(50% + var(--bg-offset, 0px)), top, top;
+  background-attachment: fixed, scroll, scroll;
+  background-blend-mode: overlay, normal, normal;
   color: #f8fafc;
 }
 
 html.theme-ocean body {
-  background-image: url('/assets/baxc.png'), radial-gradient(circle at top, #05263a, #04263a);
-  background-size: cover, cover;
-  background-position: center calc(50% + var(--bg-offset, 0px)), top;
-  background-attachment: fixed, scroll;
-  background-blend-mode: overlay;
-  background-color: #04293a;
+  background-image: 
+    radial-gradient(circle at top, #082f49, #020617 80%);
+  background-color: #020617;
   color: #ecfeff;
+}
+html.theme-ocean body::before {
+  background-image: linear-gradient(to right, rgba(6, 182, 212, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
 }
 
 html.theme-sunset body {
-  background-image: url('/assets/baxc.png'), radial-gradient(circle at top, #05281a, #03221a);
-  background-size: cover, cover;
-  background-position: center calc(50% + var(--bg-offset, 0px)), top;
-  background-attachment: fixed, scroll;
-  background-blend-mode: overlay;
-  background-color: #03221a;
+  background-image: 
+    radial-gradient(circle at top, #064e3b, #020617 80%);
+  background-color: #020617;
   color: #ecfff9;
 }
 
-/* utility CSS hooks: primary accents for components */
-html.theme-modern .primary-accent { background-image: linear-gradient(135deg,#6366f1,#8b5cf6); }
+html.theme-sunset body::before {
+  background-image: linear-gradient(to right, rgba(16, 185, 129, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+}
+
+/* utility hooks */
+html.theme-modern .primary-accent { background-image: linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899); }
 html.theme-ocean .primary-accent { background-image: linear-gradient(135deg,#06b6d4,#3b82f6); }
 html.theme-sunset .primary-accent { background-image: linear-gradient(135deg,#10b981,#0ea5a4); }
 
-html.theme-modern .nav-style { background-color: rgba(15,23,42,0.7); }
-html.theme-ocean .nav-style { background-color: rgba(3,37,65,0.75); backdrop-filter: blur(8px); }
-html.theme-sunset .nav-style { background-color: rgba(3,37,28,0.75); backdrop-filter: blur(8px); }
+html.theme-modern .nav-style { background-color: rgba(2,6,23,0.5); backdrop-filter: blur(20px); }
+html.theme-ocean .nav-style { background-color: rgba(8,47,73,0.5); backdrop-filter: blur(20px); }
+html.theme-sunset .nav-style { background-color: rgba(6,78,59,0.5); backdrop-filter: blur(20px); }
+

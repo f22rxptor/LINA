@@ -15,12 +15,8 @@ A full-stack application for diabetes and hypertension risk prediction using mac
 - **React 18.3** - UI framework
 - **Vite 7.3** - Fast build tool & dev server
 - **Tailwind CSS 3.4** - Styling
-- **Firebase 12.7** - Authentication & real-time data
-
-### Backend
 - **Node.js + Express** - REST API server
 - **Python Flask** - ML prediction server
-- **Gemini 2.5 Flash API** - AI chatbot backbone
 
 ### Machine Learning
 - **scikit-learn** - Random Forest & Gradient Boosting classifiers
@@ -48,6 +44,39 @@ python -m pip install -r ml-server/requirements.txt
 ```
 
 ### 2. Set Up Environment Variables
+
+Create a `.env` file based on `.env.example` and fill in your keys. A MySQL database is now used for persisting users and prediction history – make sure to provide connection details (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`).
+
+#### Database initialization
+Run the SQL below (or execute with your migration tool) after creating the `lina` database:
+
+```sql
+-- users table stores credentials for basic auth
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- predictions history logged from the Node backend
+CREATE TABLE predictions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  age INT,
+  bmi FLOAT,
+  bp_systolic FLOAT,
+  fasting_glucose FLOAT,
+  family_history TINYINT,
+  activity_level TINYINT,
+  risk TINYINT,
+  probability FLOAT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+You can run these statements with MySQL CLI or a GUI like MySQL Workbench.
+
 ## 📂 Project Structure
 
 ```
@@ -101,8 +130,9 @@ LINA/
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check |
-| POST | `/api/predict` | Predict diabetes risk (calls ML server) |
-| POST | `/api/chat` | Chat with Aura AI assistant |
+| POST | `/api/predict` | Predict diabetes risk (calls ML server) and log entry to DB |
+| POST | `/api/signup` | Register a new user (stored in MySQL) |
+| POST | `/api/login` | Authenticate against MySQL users table |
 
 **Predict Request:**
 ```json
@@ -116,12 +146,6 @@ LINA/
 }
 ```
 
-**Chat Request:**
-```json
-{
-  "message": "What are the symptoms of diabetes?"
-}
-```
 
 ### ML Server (Python) - http://localhost:3002
 
@@ -170,10 +194,6 @@ Make sure you're using the correct path:
 - Backend (3001): `netstat -ano | findstr :3001` then `taskkill /PID <PID> /F`
 - ML Server (3002): `netstat -ano | findstr :3002` then `taskkill /PID <PID> /F`
 
-### Issue: Gemini API errors
-- Verify your API key is correct in `.env`
-- Check rate limits on [Google AI Console](https://aistudio.google.com)
-- Ensure message length is reasonable (API has input limits)
 
 ## 📝 Available npm Scripts
 
@@ -191,7 +211,6 @@ npm run lint         # Check code with ESLint
 
 - **Never commit** `.env` file or API keys
 - Always use `.env.example` as a template
-- Treat `GEMINI_API_KEY` as sensitive
 - For production, use environment secrets management (GitHub Secrets, AWS Secrets Manager, etc.)
 
 ## 🚢 Deployment
@@ -219,7 +238,6 @@ npm run build
 - [Tailwind CSS](https://tailwindcss.com)
 - [Flask Docs](https://flask.palletsprojects.com)
 - [scikit-learn Docs](https://scikit-learn.org)
-- [Gemini API](https://ai.google.dev)
 
 ## 📄 License
 
@@ -236,11 +254,6 @@ npm run build
 - Risk scoring algorithm
 - Visual result display
 
-### AIAssistantSection
-- Message history
-- Loading states
-- Gemini API integration
-- System prompt for health focus
 
 ### NutritionSection
 - Dual filtering (category + risk)
@@ -258,8 +271,7 @@ npm run build
 
 Create a `.env` file (optional for production):
 ```
-VITE_FIREBASE_API_KEY=xxx
-VITE_FIREBASE_AUTH_DOMAIN=xxx
+
 ...
 ```
 
@@ -280,7 +292,6 @@ VITE_FIREBASE_AUTH_DOMAIN=xxx
 ## Notes
 
 - All images are from Unsplash (placeholder URLs)
-- Gemini API key exposed in code (for demo only)
 - Mock ML predictions (real model integration pending)
 - Food data is static (can be connected to database)
 

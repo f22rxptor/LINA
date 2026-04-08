@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import Button from '../Button'
 
-export default function AuthModal({ isOpen, onClose, auth }) {
+export default function AuthModal({ isOpen, onClose, onAuth }) {
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -23,13 +22,26 @@ export default function AuthModal({ isOpen, onClose, auth }) {
     setLoading(true)
 
     try {
-      if (isLogin) {
-        await signInWithEmailAndPassword(auth, formData.email, formData.password)
-      } else {
-        await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+      const endpoint = isLogin ? '/api/login' : '/api/signup'
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+        name: formData.name
       }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Authentication failed')
+
+      // you might store data.id or token in context/localStorage here
       setFormData({ name: '', email: '', password: '' })
       onClose()
+      if (onAuth) onAuth(data)
     } catch (err) {
       setError(err.message)
     } finally {
